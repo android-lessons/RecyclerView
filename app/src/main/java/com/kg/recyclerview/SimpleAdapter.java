@@ -1,5 +1,6 @@
 package com.kg.recyclerview;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +12,12 @@ import android.widget.TextView;
 import java.util.List;
 
 public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ViewHolder> {
+
+    interface OnItemSelectedListener{
+        public void onItemSelected(int index, boolean selected);
+    }
+
+    private OnItemSelectedListener listener;
 
     private List<String> data;
 
@@ -29,6 +36,17 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int position) {
         viewHolder.name.setText(data.get(viewHolder.getAdapterPosition()));
+        viewHolder.name.setBackgroundColor(viewHolder.name.isSelected() ? Color.RED : Color.BLUE);
+        viewHolder.name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setSelected(!v.isSelected());
+                notifyItemChanged(viewHolder.getAdapterPosition());
+                if(listener != null) {
+                    listener.onItemSelected(viewHolder.getAdapterPosition(), v.isSelected());
+                }
+            }
+        });
         viewHolder.deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -43,6 +61,10 @@ public class SimpleAdapter extends RecyclerView.Adapter<SimpleAdapter.ViewHolder
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    public void setOnItemSelectedListener(OnItemSelectedListener listener) {
+        this.listener = listener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

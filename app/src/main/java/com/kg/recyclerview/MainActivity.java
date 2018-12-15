@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +18,14 @@ public class MainActivity extends AppCompatActivity {
 
     private List<String> data;
 
+    private List<String> selectedNames;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        selectedNames = new ArrayList<>();
         data = new ArrayList<>();
         data.add("Karen");
         data.add("Babken");
@@ -40,6 +44,17 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
 
         final SimpleAdapter adapter = new SimpleAdapter(data);
+        adapter.setOnItemSelectedListener(new SimpleAdapter.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(int index, boolean selected) {
+                if(selected) {
+                    selectedNames.add(data.get(index));
+                } else {
+                    selectedNames.remove(data.get(index));
+                }
+                Toast.makeText(MainActivity.this, "item clicked " + index , Toast.LENGTH_SHORT).show();
+            }
+        });
         recyclerView.setAdapter(adapter);
 
         addBtn.setOnClickListener(new View.OnClickListener() {
